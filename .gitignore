@@ -1,5 +1,6 @@
 # Claude Code
 .claude
+.serena
 
 # Rust build artifacts
 /target/
