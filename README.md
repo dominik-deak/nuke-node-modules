@@ -18,7 +18,7 @@ A fast, multi-threaded tool to recursively delete `node_modules` directories fro
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
+git clone https://github.com/dominik-deak/nuke-node-modules
 cd nuke-node-modules
 
 # Install globally using Cargo
@@ -146,7 +146,7 @@ The Rust implementation provides excellent performance characteristics:
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
+git clone https://github.com/dominik-deak/nuke-node-modules
 cd nuke-node-modules
 
 # Build in development mode
