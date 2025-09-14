@@ -1,0 +1,58 @@
+#!/bin/sh
+
+echo "🚀 Running pre-push checks..."
+echo "═══════════════════════════════"
+
+# 1. Lint check (strict mode - warnings as errors, all targets including tests)
+echo "🔍 Running cargo clippy on all targets (treating warnings as errors)..."
+cargo clippy --all-targets -- -D warnings
+if [ $? -ne 0 ]; then
+    echo "❌ Clippy check failed! Fix linting issues before pushing."
+    exit 1
+fi
+echo "✅ Clippy check passed"
+echo ""
+
+# 2. Compile check
+echo "🔨 Running cargo check..."
+cargo check
+if [ $? -ne 0 ]; then
+    echo "❌ Compilation check failed! Fix compile errors before pushing."
+    exit 1
+fi
+echo "✅ Compilation check passed"
+echo ""
+
+# 3. Run all tests
+echo "🧪 Running all tests..."
+cargo test
+if [ $? -ne 0 ]; then
+    echo "❌ Tests failed! Fix failing tests before pushing."
+    exit 1
+fi
+echo "✅ All tests passed"
+echo ""
+
+# 4. Security audit
+echo "🔒 Running security audit..."
+cargo audit
+if [ $? -ne 0 ]; then
+    echo "❌ Security audit found vulnerabilities! Review and fix before pushing."
+    exit 1
+fi
+echo "✅ Security audit passed"
+echo ""
+
+# 5. Test coverage check (uncomment and set threshold when ready for 100% coverage)
+# echo "📊 Checking test coverage..."
+# cargo llvm-cov --fail-under-lines 100 --quiet
+# if [ $? -ne 0 ]; then
+#     echo "❌ Test coverage below 100%! Add more tests before pushing."
+#     echo "💡 Run 'cargo llvm-cov --html' to see detailed coverage report."
+#     exit 1
+# fi
+# echo "✅ Test coverage check passed"
+# echo ""
+
+echo "🎉 All pre-push checks passed! Safe to push."
+exit 0
