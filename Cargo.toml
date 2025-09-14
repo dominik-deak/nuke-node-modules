@@ -1,0 +1,73 @@
+[package]
+name = "nuke-node-modules"
+version = "0.1.0"
+edition = "2021"
+description = "A fast, multi-threaded tool to recursively delete node_modules directories"
+keywords = ["nodejs", "cleanup", "filesystem", "parallel"]
+categories = ["command-line-utilities", "filesystem"]
+
+[[bin]]
+name = "nuke-node-modules"
+path = "src/main.rs"
+
+[dependencies]
+# CLI framework
+clap = { version = "4.4", features = ["derive", "color"] }
+
+# Filesystem operations
+walkdir = "2.4"
+
+# Parallelism
+rayon = "1.8"
+
+# Pattern matching
+glob = "0.3"
+
+# User interface
+colored = "2.0"
+indicatif = "0.17"
+dialoguer = "0.11"
+
+# System info
+num_cpus = "1.16"
+
+# Serialization (for potential config files)
+serde = { version = "1.0", features = ["derive"] }
+
+# Date/time handling
+chrono = "0.4"
+
+# Error handling
+anyhow = "1.0"
+thiserror = "1.0"
+
+[dev-dependencies]
+# Git hooks
+cargo-husky = { version = "1", features = ["user-hooks"] }
+
+# Testing
+mockall = "0.12"
+tempfile = "3.8"
+assert_fs = "1.0"
+predicates = "3.0"
+
+# Property-based testing
+proptest = "1.4"
+
+# Benchmarking
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[profile.release]
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[[test]]
+name = "integration"
+path = "integration-tests/integration.rs"
+
+[[bench]]
+name = "deletion_benchmark"
+harness = false
+path = "benches/deletion_benchmark.rs"
