@@ -1,6 +1,6 @@
 //! Parallel directory deletion functionality
 
-use crate::{scanner, CleanupStats};
+use crate::{scanner, CleanupStats, format_bytes};
 use anyhow::Result;
 use indicatif::{ProgressBar, ProgressStyle};
 use rayon::prelude::*;
@@ -156,20 +156,3 @@ fn print_cleanup_summary(stats: &CleanupStats) {
     }
 }
 
-/// Format bytes into human-readable format
-pub fn format_bytes(bytes: u64) -> String {
-    const UNITS: &[&str] = &["B", "KB", "MB", "GB", "TB"];
-    let mut size = bytes as f64;
-    let mut unit_index = 0;
-
-    while size >= 1024.0 && unit_index < UNITS.len() - 1 {
-        size /= 1024.0;
-        unit_index += 1;
-    }
-
-    if unit_index == 0 {
-        format!("{} {}", size as u64, UNITS[unit_index])
-    } else {
-        format!("{:.1} {}", size, UNITS[unit_index])
-    }
-}
