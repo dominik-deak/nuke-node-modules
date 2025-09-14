@@ -164,7 +164,7 @@ cargo bench
 
 ### Testing
 
-The project has comprehensive test coverage with:
+The project has comprehensive testing with:
 
 - **Unit tests** for each module with mocked filesystem operations
 - **Integration tests** with real temporary directories

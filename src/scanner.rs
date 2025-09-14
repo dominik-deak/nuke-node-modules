@@ -72,7 +72,7 @@ impl Scanner {
     }
 
     /// Check if a path should be excluded based on the exclusion patterns
-    fn should_exclude(&self, path: &Path) -> bool {
+    pub fn should_exclude(&self, path: &Path) -> bool {
         let path_str = path.to_string_lossy();
 
         for pattern in &self.exclude_patterns {

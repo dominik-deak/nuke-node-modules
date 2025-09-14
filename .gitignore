@@ -5,11 +5,5 @@
 /target/
 Cargo.lock
 
-# Coverage reports
-coverage/
-lcov.info
-*.profraw
-*.profdata
-
 # OS files
 .DS_Store

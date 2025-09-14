@@ -177,3 +177,101 @@ fn test_only_finds_top_level_node_modules() -> Result<()> {
 
     Ok(())
 }
+
+/// Test should_exclude function with various patterns and paths
+#[test]
+fn test_should_exclude_patterns() -> Result<()> {
+    use std::path::Path;
+
+    // Test with exclusion patterns
+    let exclude_patterns = vec![
+        "**/vendor/**".to_string(),
+        "**/build/**".to_string(),
+        "**/dist/**".to_string(),
+    ];
+
+    let scanner = Scanner::new(".", &exclude_patterns);
+
+    // Should exclude paths matching patterns
+    assert!(scanner.should_exclude(Path::new("/project/vendor/lib")));
+    assert!(scanner.should_exclude(Path::new("/project/vendor/node_modules")));
+    assert!(scanner.should_exclude(Path::new("/app/build/output")));
+    assert!(scanner.should_exclude(Path::new("/app/dist/js")));
+
+    // Should not exclude paths that don't match
+    assert!(!scanner.should_exclude(Path::new("/project/src")));
+    assert!(!scanner.should_exclude(Path::new("/project/node_modules")));
+    assert!(!scanner.should_exclude(Path::new("/app/source")));
+
+    Ok(())
+}
+
+/// Test should_exclude with no exclusion patterns
+#[test]
+fn test_should_exclude_no_patterns() {
+    use std::path::Path;
+
+    let scanner = Scanner::new(".", &[]);
+
+    // Should not exclude anything when no patterns are set
+    assert!(!scanner.should_exclude(Path::new("/project/vendor/lib")));
+    assert!(!scanner.should_exclude(Path::new("/project/build/output")));
+    assert!(!scanner.should_exclude(Path::new("/any/path/here")));
+}
+
+/// Test should_exclude with edge cases
+#[test]
+fn test_should_exclude_edge_cases() {
+    use std::path::Path;
+
+    let exclude_patterns = vec![
+        "**/.git/**".to_string(),
+        "**/temp_*/**".to_string(),
+        "**/*backup*/**".to_string(),
+    ];
+
+    let scanner = Scanner::new(".", &exclude_patterns);
+
+    // Test hidden directories
+    assert!(scanner.should_exclude(Path::new("/project/.git/hooks")));
+    assert!(scanner.should_exclude(Path::new("/app/.git/config")));
+
+    // Test wildcard patterns
+    assert!(scanner.should_exclude(Path::new("/project/temp_files/cache")));
+    assert!(scanner.should_exclude(Path::new("/project/temp_cache/data")));
+    assert!(scanner.should_exclude(Path::new("/project/my_backup_folder/data")));
+    assert!(scanner.should_exclude(Path::new("/project/backup_old/files")));
+
+    // Should not exclude similar but not matching paths
+    assert!(!scanner.should_exclude(Path::new("/project/template/files")));  // template != temp_*
+    assert!(!scanner.should_exclude(Path::new("/project/backup")));  // backup != *backup*
+}
+
+/// Test should_exclude with special characters in paths
+#[test]
+fn test_should_exclude_special_characters() {
+    use std::path::Path;
+
+    let exclude_patterns = vec![
+        "**/test-*/**".to_string(),
+        "**/@scope/**".to_string(),
+        "**/node_modules/.cache/**".to_string(),
+    ];
+
+    let scanner = Scanner::new(".", &exclude_patterns);
+
+    // Test paths with hyphens
+    assert!(scanner.should_exclude(Path::new("/project/test-utils/helper")));
+    assert!(scanner.should_exclude(Path::new("/project/test-data/mock")));
+
+    // Test scoped packages
+    assert!(scanner.should_exclude(Path::new("/project/@scope/package")));
+    assert!(scanner.should_exclude(Path::new("/app/@scope/utils")));
+
+    // Test nested cache paths
+    assert!(scanner.should_exclude(Path::new("/project/node_modules/.cache/babel")));
+    assert!(scanner.should_exclude(Path::new("/app/node_modules/.cache/webpack")));
+
+    // Should not match non-scoped packages
+    assert!(!scanner.should_exclude(Path::new("/project/scope/package")));  // No @ prefix
+}

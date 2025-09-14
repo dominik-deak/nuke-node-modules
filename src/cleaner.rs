@@ -26,10 +26,28 @@ impl Cleaner {
             .build()
             .expect("Failed to create thread pool");
 
+        // Disable progress bars when running tests
+        let show_progress = show_progress && !Self::is_test_environment();
+
         Self {
             thread_pool,
             show_progress,
         }
+    }
+
+    /// Check if we're running in a test environment
+    pub fn is_test_environment() -> bool {
+        // Compile-time test detection
+        if cfg!(test) {
+            return true;
+        }
+
+        // Runtime test detection via environment variables
+        std::env::var("CARGO_MANIFEST_DIR").is_ok() && (
+            std::env::var("RUST_TEST").is_ok() ||
+            std::env::var("CARGO_CRATE_NAME").is_ok() ||
+            std::env::args().any(|arg| arg.contains("test"))
+        )
     }
 
     /// Delete directories in parallel
@@ -142,7 +160,7 @@ pub fn calculate_directory_size(dir: &Path) -> Result<u64> {
 }
 
 /// Print a summary of the cleanup operation
-fn print_cleanup_summary(stats: &CleanupStats) {
+pub fn print_cleanup_summary(stats: &CleanupStats) {
     println!("\n🧹 Cleanup Summary:");
     println!("  Directories found: {}", stats.directories_found);
     println!("  Successfully deleted: {}", stats.directories_deleted);

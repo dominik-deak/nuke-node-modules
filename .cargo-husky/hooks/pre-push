@@ -43,16 +43,5 @@ fi
 echo "✅ Security audit passed"
 echo ""
 
-# 5. Test coverage check (uncomment and set threshold when ready for 100% coverage)
-# echo "📊 Checking test coverage..."
-# cargo llvm-cov --fail-under-lines 100 --quiet
-# if [ $? -ne 0 ]; then
-#     echo "❌ Test coverage below 100%! Add more tests before pushing."
-#     echo "💡 Run 'cargo llvm-cov --html' to see detailed coverage report."
-#     exit 1
-# fi
-# echo "✅ Test coverage check passed"
-# echo ""
-
 echo "🎉 All pre-push checks passed! Safe to push."
 exit 0
