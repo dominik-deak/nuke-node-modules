@@ -110,12 +110,11 @@ impl Cleaner {
         }
 
         // Print errors if any occurred
-        if let Ok(error_list) = errors.lock() {
-            if !error_list.is_empty() && self.show_progress {
-                eprintln!("\nErrors encountered:");
-                for error in error_list.iter() {
-                    eprintln!("  {}", error);
-                }
+        if let Ok(error_list) = errors.lock()
+            && !error_list.is_empty() && self.show_progress {
+            eprintln!("\nErrors encountered:");
+            for error in error_list.iter() {
+                eprintln!("  {}", error);
             }
         }
 

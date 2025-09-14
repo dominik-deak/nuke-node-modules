@@ -150,14 +150,12 @@ pub fn print_verbose_info(targets: &[PathBuf]) -> Result<()> {
         println!("{}. {}", i + 1, parent.display());
 
         // Try to get some metadata about the directory
-        if let Ok(metadata) = std::fs::metadata(target) {
-            if let Ok(modified) = metadata.modified() {
-                if let Ok(duration) = modified.duration_since(std::time::UNIX_EPOCH) {
-                    let datetime = chrono::DateTime::from_timestamp(duration.as_secs() as i64, 0);
-                    if let Some(dt) = datetime {
-                        println!("   Last modified: {}", dt.format("%Y-%m-%d %H:%M:%S"));
-                    }
-                }
+        if let Ok(metadata) = std::fs::metadata(target)
+            && let Ok(modified) = metadata.modified()
+            && let Ok(duration) = modified.duration_since(std::time::UNIX_EPOCH) {
+            let datetime = chrono::DateTime::from_timestamp(duration.as_secs() as i64, 0);
+            if let Some(dt) = datetime {
+                println!("   Last modified: {}", dt.format("%Y-%m-%d %H:%M:%S"));
             }
         }
 

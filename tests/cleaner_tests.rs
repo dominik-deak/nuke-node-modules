@@ -265,7 +265,7 @@ fn test_is_test_environment_with_env_vars() {
 
     // Test with CARGO_MANIFEST_DIR set (which it typically is during tests)
     if original_cargo_manifest.is_none() {
-        env::set_var("CARGO_MANIFEST_DIR", "/test/path");
+        unsafe { env::set_var("CARGO_MANIFEST_DIR", "/test/path"); }
     }
 
     // The function should still return true due to cfg!(test) being true
@@ -273,17 +273,19 @@ fn test_is_test_environment_with_env_vars() {
     assert!(Cleaner::is_test_environment());
 
     // Restore original environment
-    match original_cargo_manifest {
-        Some(value) => env::set_var("CARGO_MANIFEST_DIR", value),
-        None => env::remove_var("CARGO_MANIFEST_DIR"),
-    }
-    match original_rust_test {
-        Some(value) => env::set_var("RUST_TEST", value),
-        None => env::remove_var("RUST_TEST"),
-    }
-    match original_cargo_crate {
-        Some(value) => env::set_var("CARGO_CRATE_NAME", value),
-        None => env::remove_var("CARGO_CRATE_NAME"),
+    unsafe {
+        match original_cargo_manifest {
+            Some(value) => env::set_var("CARGO_MANIFEST_DIR", value),
+            None => env::remove_var("CARGO_MANIFEST_DIR"),
+        }
+        match original_rust_test {
+            Some(value) => env::set_var("RUST_TEST", value),
+            None => env::remove_var("RUST_TEST"),
+        }
+        match original_cargo_crate {
+            Some(value) => env::set_var("CARGO_CRATE_NAME", value),
+            None => env::remove_var("CARGO_CRATE_NAME"),
+        }
     }
 }
 

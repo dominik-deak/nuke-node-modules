@@ -1,7 +1,7 @@
 [package]
 name = "nuke-node-modules"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 description = "A fast, multi-threaded tool to recursively delete node_modules directories"
 keywords = ["nodejs", "cleanup", "filesystem", "parallel"]
 categories = ["command-line-utilities", "filesystem"]
